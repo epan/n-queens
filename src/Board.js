@@ -79,28 +79,22 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      var pieces = {};
-      var row = this.attributes[rowIndex];
+      var row = this.get(rowIndex);
+      var check = _.countBy(row, function(num){
+        return num > 0 ? 'pieces' : 'empty';
+      });
 
-      for (var i = 0; i < row.length; i++){
-        pieces[row[i]] = pieces[row[i]] + 1 || 1;
-      }
-      if (pieces[1] > 1){
-        return true;
-      }
-      return false;
+      return check.pieces > 1 ? true : false;
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      var rows = this.attributes;
-      for (var row in rows){
-        if (row !== 'n'){
-          if (this.hasRowConflictAt(row)){
-            return true;
-          }
+      for (var i = 0; i < this.get('n'); i++) {
+        if (this.hasRowConflictAt(i)) {
+          return true;
         }
-      } return false;
+      }
+      return false;
     },
 
 
@@ -111,24 +105,20 @@
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
       var cols = [];
-      for (var i = 0; i < this.attributes.n; i++){
-        cols.push(this.attributes[i][colIndex]);
+      for (var i = 0; i < this.get('n'); i++){
+        cols.push(this.get(i)[colIndex]);
       }
 
-      var pieces = {};
+      var check = _.countBy(cols, function(num){
+        return num > 0 ? 'pieces' : 'empty';
+      });
 
-      for (var j = 0; j < cols.length; j++){
-        pieces[cols[j]] = pieces[cols[j]] + 1 || 1;
-      }
-      if (pieces[1] > 1){
-        return true;
-      }
-      return false;
+      return check.pieces > 1 ? true : false;
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-      for (var i = 0; i < this.attributes.n; i++) {
+      for (var i = 0; i < this.get('n'); i++) {
         if (this.hasColConflictAt(i)) {
           return true;
         }
@@ -143,12 +133,35 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      var diagonal = [];
+      var colIndex = majorDiagonalColumnIndexAtFirstRow;
+      for (var i = 0; i < this.get('n'); i++){
+        if (colIndex === this.get('n')){
+          break;
+        }
+        if (this.get(i)[colIndex] !== undefined){
+          diagonal.push(this.get(i)[colIndex]);
+        }
+        colIndex++;
+      }
+      // console.log(diagonal, majorDiagonalColumnIndexAtFirstRow)
+
+      var check = _.countBy(diagonal, function(num){
+        return num > 0 ? 'pieces' : 'empty';
+      });
+
+      return check.pieces > 1 ? true : false;
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
+      var start = -1 * this.get('n') + 2;
+      for (var i = start; i < this.get('n') + 1; i++) {
+        if (this.hasMajorDiagonalConflictAt(i)){
+          return true;
+        }
+      }
+      return false;
     },
 
 
@@ -158,12 +171,35 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      var diagonal = [];
+      var colIndex = minorDiagonalColumnIndexAtFirstRow;
+      for (var i = 0; i < this.get('n'); i++){
+        if (colIndex < 0){
+          break;
+        }
+        if (this.get(i)[colIndex] !== undefined){
+          diagonal.push(this.get(i)[colIndex]);
+        }
+        colIndex--;
+      }
+
+      var check = _.countBy(diagonal, function(num){
+        return num > 0 ? 'pieces' : 'empty';
+      });
+
+
+      return check.pieces > 1 ? true : false;
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      return false; // fixme
+      var start = 2 * this.get('n') - 3;
+      for (var i = start; i > 0; i--){
+        if (this.hasMinorDiagonalConflictAt(i)){
+          return true;
+        }
+      }
+      return false;
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
