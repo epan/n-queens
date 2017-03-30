@@ -13,56 +13,79 @@
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 
-// Need a function that can place a piece in every single position
-  // Check if board is
-
-// IDEA 1
-// superclass
-  // property: solution array
-  // property: count of solutions
-  // property: count of pieces on board
-  // property: position of all(?) pieces
-  // method: create n x n board
-  // method: place pieces
-  // method: detect hasConflict
-  // method: detect solution
-  // method: create child board
-// subclass for
-  // inheriting n x n board
-  //
-
 window.findNRooksSolution = function(n) {
   // Input: n integer
   // Output: first array solution board
 
-  // First, create new board of n by n
-  // Toggle first (0,0) piece
-  // Create child generation qty: n*n -1
-    // for child 1
-      // Make sure prev generation pieces are all toggled
-      // Toggle first non-toggled piece
-    // for child 2
-      // Make sure prev generation pieces are all toggled
-      // Toggle the 2nd non-toggled piece
-    // for child 3
-      // Make sure prev generation pieces are all toggled
-      // Toggle the 3rd non-toggled piece
-    // for child M
-      // Make sure prev generation pieces are all toggled
-      // Toggle the Mth non-toggled piece
+  // Edge case:
+    // If n = 0, return: []
+    // If n = 1, return: [[1]]
+  // First, initialize new board of n by n
+  // Recurse this on each row:
+    // If row = n
+      // return the board
+    //
 
-  var solution; //[]
-  for (var i = 1; i < Math.pow(n, 2); i++){
-    var child = new Board(
-  }
+
+  // var solution; //[]
+  // for (var i = 1; i < Math.pow(n, 2); i++){
+  //   var child = new Board(
+  // }
 
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
 };
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
+
 window.countNRooksSolutions = function(n) {
+  // Input: n integer
+  // Output: solutionCount integer
+
+  // Edge cases:
+  // if (n === 0) { return 0; }
+  if (n === 1) { return 1; }
+
+  // Create new board of n by n
+  var game = new Board({n: n});
+
+  // Initialize solution count to 0
+  // Initialize pieces count to 0
   var solutionCount = 0;
+  var piecesCount = 0;
+
+  // Recursive solver function, arg: a row
+    // If the row = n && pieces = n
+      // Increment solution count
+      // Set pieces to 0
+      // return
+  var solver = function (rowIndex) {
+    if (rowIndex === n ) {
+      solutionCount++;
+      //piecesCount = 0;
+      return;
+    }
+    for (var colIndex = 0; colIndex < n; colIndex++) {
+      game.togglePiece(rowIndex, colIndex);
+      if (!game.hasAnyRooksConflicts()) {
+        //piecesCount++;
+        solver(rowIndex + 1);
+      }
+      game.togglePiece(rowIndex, colIndex);
+    }
+  };
+
+  solver(0);
+
+    // Loop through row i, (row 0 row n)
+    // for (var colIndex = 0; colIndex < n; colIndex++)
+      // Toggle(row, i) ON
+      // If no conflicts on currently ON piece,
+        // increment pieces by 1
+        // Recurse solver function (row + 1)
+      // Toggle(row, i) OFF
+    // Invoke recursive solver with (0)
+
 
 
 
